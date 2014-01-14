@@ -359,35 +359,40 @@ void *start_scanner_thread(void *param) {
 				printf("------------------------------------\n");
 			}
 			if (scanner->finishing_alert_mode || !(scanner->isTableMachine)  || scanner->manager->num_of_regular_threads == 0) {
-				if (scanner->manager->dedicated_use_compressed) {
-					retval = match(scanner->machine, packet->data, packet->size, scanner->verbose, &(scanner->stats), last_idx_in_root, scanner->drop);
-				} else {
-#ifndef SCANNER_STATISTICS
-					retval = matchTableMachine_no_trasfer(
-							scanner->tableMachine, scanner->manager,
-							packet->data,
-							packet->size,
-							scanner->verbose,
-							scanner->drop);
+#ifndef HYBRID_SCANNER
+                                retval = match(scanner->machine, packet->data, packet->size, scanner->verbose, &(scanner->stats), last_idx_in_root, scanner->drop);
 #else
-					is_heavy = 0;
-					retval = matchTableMachine(
-							scanner->tableMachine, scanner->manager, 0,
-							packet->data,
-							packet->size,
-							scanner->verbose,
-							NULL, NULL, NULL, NULL, &is_heavy, NULL, &uncommonRate);
+                                if (scanner->manager->dedicated_use_compressed) {
+                                        retval = match(scanner->machine, packet->data, packet->size, scanner->verbose, &(scanner->stats), last_idx_in_root, scanner->drop);
+                                } else {
+#ifndef SCANNER_STATISTICS
+                                        retval = matchTableMachine_no_trasfer(
+                                                        scanner->tableMachine, scanner->manager,
+                                                        packet->data,
+                                                        packet->size,
+                                                        scanner->verbose,
+                                                        scanner->drop);
+#else
+                                        is_heavy = 0;
+                                        retval = matchTableMachine(
+                                                        scanner->tableMachine, scanner->manager, 0,
+                                                        packet->data,
+                                                        packet->size,
+                                                        scanner->verbose,
+                                                        NULL, NULL, NULL, NULL, &is_heavy, NULL, &uncommonRate,
+                                                        scanner->activeSets /* active pattern sets */);
 
-					if (is_heavy) {
-						num_heavy_since_alert++;
-					} else {
-						num_regular_since_alert++;
-					}
-					//if (packet->size > 20) {
-						uncommonRateHistogram[(int)(uncommonRate * (UNCOMMON_HISTOGRAM_SIZE - 1))]++;
-					//}
+                                        if (is_heavy) {
+                                                num_heavy_since_alert++;
+                                        } else {
+                                                num_regular_since_alert++;
+                                        }
+                                        //if (packet->size > 20) {
+                                                uncommonRateHistogram[(int)(uncommonRate * (UNCOMMON_HISTOGRAM_SIZE - 1))]++;
+                                        //}
 #endif
-				}
+                                }
+#endif
 #ifdef DROP_STATISTICS
 				if (retval == -1) {
 					// Packet was dropped
@@ -683,6 +688,7 @@ void scanner_init(ScannerData *scanner, int id, MulticoreManager *manager, State
 #ifdef HYBRID_SCANNER
 	scanner->tableMachine = tableMachine;
 	//printf("Table machine address upon scanner init: %p\n", tableMachine);
+	scanner->drop = drop;
 #endif
 	scanner->isTableMachine = isTableMachine;
 	scanner->packet_queue = packet_queue;
@@ -693,7 +699,6 @@ void scanner_init(ScannerData *scanner, int id, MulticoreManager *manager, State
 	scanner->manager = manager;
 	scanner->alert_mode_active = 0;
 	scanner->finishing_alert_mode = 0;
-	scanner->drop = drop;
 }
 
 int scanner_start(ScannerData *scanner) {

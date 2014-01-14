@@ -175,12 +175,12 @@ int main(int argc, const char *argv[]) {
 	StateMachine *machine;
 #ifdef HYBRID_SCANNER
 	TableStateMachine *tableMachine;
+	double thresholds[128];
 #endif
 	int options[NUM_OF_OPTIONS]; // [ c, d, r, s, a, f, l, b, m, p, n, v, t, u ]
 	const char *paths[NUM_OF_STRING_OPTIONS];
 	int values[NUM_OF_OPTIONS];
 	int i, idx;
-	double thresholds[128];
 
 	machine = NULL;
 
@@ -335,7 +335,7 @@ int main(int argc, const char *argv[]) {
 	} else if (options[IDX_READ]) {
 		machine = createStateMachineFromDump(paths[IDX_READ]);
 	} else if (options[IDX_FULLTBL]) {
-		machine = (StateMachine*)generateTableStateMachine(paths[IDX_FULLTBL], values[IDX_COMMON_NUM], NULL, paths[IDX_COMMON], options[IDX_VERBOSE]);
+		machine = (StateMachine*)generateTableStateMachine(paths[IDX_FULLTBL], values[IDX_COMMON_NUM], 0, NULL, paths[IDX_COMMON], options[IDX_VERBOSE]);
 	}
 #else
 	} else if (options[IDX_READ] && options[IDX_FULLTBL]) {
@@ -360,7 +360,7 @@ int main(int argc, const char *argv[]) {
 					values[IDX_STEAL], options[IDX_USE_COMP], values[IDX_WG_SIZE], values[IDX_MAX_WGS], parseThresholds(paths[IDX_THRESHOLDS], thresholds), values[IDX_DROP_LEN]);
 		}
 #else
-		inspectDumpFile(paths[IDX_SCAN], machine, options[IDX_FULLTBL], options[IDX_VERBOSE], options[IDX_TIMING], values[IDX_THREADS]);
+		inspectDumpFile(paths[IDX_SCAN], values[IDX_REPEAT], machine, options[IDX_FULLTBL], options[IDX_VERBOSE], options[IDX_TIMING], values[IDX_THREADS]);
 #endif
 		//runTest(machine, options[4]);
 	}
