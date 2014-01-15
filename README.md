@@ -1,8 +1,7 @@
-MCA^2
-=====
+Pattern Matching Engines
+========================
 
-MCA^2 standalone system implementation including compressed and non-compressed Aho-Corasick implementations.
-This repository is based on the following papers:
+Standalone Aho-Corasick based pattern matching system implementation, including compressed and non-compressed Aho-Corasick implementations, and MCA^2 system. This repository is based on the following papers:
 
 ___Pattern matching code, Aho-Corasick implementation, DFA compression:___
 
