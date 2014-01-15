@@ -55,4 +55,8 @@ Step 2: run the compressed AC automaton on a trace:
 ./main -t -m:1 -r:snort_compressed -s:my_trace.bin
 ```
 
+__Running MCA^2__
+
+To run the system in MCA^2 mode (multithreaded with heavy packet isolation and transfer), uncomment the HYBRID_SCANNER flag in Common/Flags.h, compile, and run with both -a and -r, along with -s. You should also specify more parameters as appears in the usage string printed when running with no parameters.
+
 For questions, contact yotamhc
