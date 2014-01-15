@@ -60,7 +60,7 @@ void inspectDumpFile(const char *path, int repeat, StateMachine *machine, TableS
 		int verbose, int timing, int threads, int packets_to_steal, int dedicated_use_compressed,
 		int work_group_size, int max_wgs, double *thresholds, int drop) {
 #else
-void inspectDumpFile(const char *path, StateMachine *machine, int isTableMachine, int verbose, int timing, int threads) {
+void inspectDumpFile(const char *path, int repeat, StateMachine *machine, int isTableMachine, int verbose, int timing, int threads) {
 #endif
 	double /*rate,*/ combinedRate, threadRate;//, rateWithHeaders;
 	Timer t;
@@ -104,17 +104,26 @@ void inspectDumpFile(const char *path, StateMachine *machine, int isTableMachine
 
 	packetreader_init(&reader, path, repeat, packet_queues, threads);
 	for (i = 0; i < threads; i++) {
+#ifdef HYBRID_SCANNER
 		scanner_init(&(scanners[i]), i, &manager, machine, tableMachine, isTableMachine, &packet_queues[i], verbose, drop);
+#else
+		scanner_init(&(scanners[i]), i, &manager, machine, isTableMachine, &packet_queues[i], verbose);
+#endif
 	}
 
+#ifdef HYBRID_SCANNER
 	multicore_manager_init(&manager, scanners, threads, work_group_size, max_wgs, packets_to_steal, dedicated_use_compressed);
 	multicore_manager_set_thresholds(&manager, thresholds);
-
+#else
+	multicore_manager_init(&manager, scanners, threads, 1, threads, 0, 0);
+#endif
 	packetreader_start(&reader);
 
 	packetreader_join(&reader);
 
+#ifdef HYBRID_SCANNER
 	multicore_manager_start(&manager);
+#endif
 #ifdef GLOBAL_TIMING
 #ifdef PRINT_GLOBAL_TIMER_EVENTS
 	events = NULL;
@@ -153,9 +162,11 @@ void inspectDumpFile(const char *path, StateMachine *machine, int isTableMachine
 	global_timer_end(&(manager.gtimer));
 #endif
 
+#ifdef HYBRID_SCANNER
 	multicore_manager_stop(&manager);
 
 	multicore_manager_join(&manager);
+#endif
 
 #ifdef GLOBAL_TIMING
 	global_timer_join(&(manager.gtimer));
