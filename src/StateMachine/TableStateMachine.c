@@ -262,7 +262,9 @@ int matchTableMachine(TableStateMachine *machine, MulticoreManager *manager, int
 		current = next;
 		idx++;
 	}
+#ifdef HEAVY_PACKET_RECOGNITION
 	*uncommonRate = ((double)uncommon)/idx;
+#endif
 	return res;
 }
 

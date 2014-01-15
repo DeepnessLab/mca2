@@ -36,15 +36,22 @@ void handle_alert_mode(MulticoreManager *manager, double rate) { //, const doubl
 	CyclicLockFreeQueue *queue;
 	int queue_not_empty;
 	int size;
-	int exit_alert_mode, status;
+#ifdef ALERT_MODE_RECHECK
+	int exit_alert_mode;
+#endif
+	int status;
 
 	dedicated_wgs = 0;
 	changed = 0;
 	num_dedicated_threads = 0;
+#ifdef ALERT_MODE_RECHECK
 	exit_alert_mode = 0;
+#endif
 
 	manager->alert_mode_used = 1;
 	startTiming(&(manager->alert_mode_timer));
+
+	num_regular_threads = manager->num_of_regular_threads;
 
 #ifdef GLOBAL_TIMING
 	global_timer_set_event(&(manager->gtimer), "Alert mode started", "MulticoreManager");
@@ -150,9 +157,11 @@ void handle_alert_mode(MulticoreManager *manager, double rate) { //, const doubl
 			//manager->stopped = 1;
 		}
 
+#ifdef ALERT_MODE_RECHECK
 		if (rate < manager->work_groups_thresholds[0]) {
 			exit_alert_mode = 1;
 		}
+#endif
 
 		queue_not_empty = 0;
 		for (i = num_dedicated_threads; i < manager->num_scanners && !queue_not_empty; i++) {
