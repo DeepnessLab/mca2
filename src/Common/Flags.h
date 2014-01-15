@@ -27,12 +27,12 @@
 //#define AC_PRINT_DEPTH_HIST
 //#define PRINT_STATE_VISIT_HIST
 //#define HYBRID_SCANNER
-#define HEAVY_PACKET_RECOGNITION
-#define HEAVY_PACKET_RECOGNITION_BYTES_TO_READ_BEFORE_CHECKING 	20
-#define HEAVY_PACKET_RECOGNITION_UNCOMMON_RATE_TO_TAKE_ACTION	0.25
+//#define HEAVY_PACKET_RECOGNITION
+//#define HEAVY_PACKET_RECOGNITION_BYTES_TO_READ_BEFORE_CHECKING 	20
+//#define HEAVY_PACKET_RECOGNITION_UNCOMMON_RATE_TO_TAKE_ACTION	0.25
 //#define GLOBAL_TIMING
-#define MIXED_TRAFFIC
-#define DEPTHMAP // needed for heavy packet transfer!
+//#define MIXED_TRAFFIC
+//#define DEPTHMAP // needed for heavy packet transfer!
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // The following flags should be commented out to use the automatic makefile for remote tests //
