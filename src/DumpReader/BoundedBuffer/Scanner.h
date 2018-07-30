@@ -30,7 +30,9 @@ typedef struct scanner_data {
 	MachineStats stats;
 	pthread_t thread_id;
 	pthread_attr_t thread_attr;
+#ifdef LINUX
 	cpu_set_t cpuset;
+#endif
 	int done;
 	Timer timer;
 	unsigned long bytes_scanned;

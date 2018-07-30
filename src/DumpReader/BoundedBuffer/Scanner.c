@@ -707,11 +707,15 @@ int scanner_start(ScannerData *scanner) {
 
 int scanner_start_with_affinity(ScannerData *scanner, int cpuid) {
 	int res;
+#ifdef LINUX
 	CPU_ZERO(&(scanner->cpuset));
 	CPU_SET(cpuid, &(scanner->cpuset));
+#endif
 
 	pthread_attr_init(&(scanner->thread_attr));
+#ifdef LINUX
 	pthread_attr_setaffinity_np(&(scanner->thread_attr), sizeof(cpu_set_t), &(scanner->cpuset));
+#endif
 	pthread_attr_setscope(&(scanner->thread_attr), PTHREAD_SCOPE_SYSTEM);
 
 	res = pthread_create(&(scanner->thread_id), &(scanner->thread_attr), start_scanner_thread, (void*)scanner);

@@ -34,13 +34,13 @@
 										 ((arr)[(3 * (i)) / 8] & MASK_BITS_7) : 0) >> ((3 * (i)) % 8))
 */
 
-inline uchar GET_3BITS_ELEMENT(uchar *arr, int i);
+uchar GET_3BITS_ELEMENT(uchar *arr, int i);
 
 #ifdef COUNT_CALLS
 int getCounter_BitArray();
 #endif
 
-inline void SET_3BITS_ELEMENT(uchar *arr, int i, uchar value);
+void SET_3BITS_ELEMENT(uchar *arr, int i, uchar value);
 
 #define GET_1BIT_ELEMENT(arr, i) (((arr)[(i) / 8] >> ((i) % 8)) & 0x01)
 
